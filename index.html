@@ -95,7 +95,7 @@
     <fieldset>
       <legend>Text</legend>
       <label class="stack">Load a page (title, description and article text) <span class="seed"><input type="url" name="url" placeholder="https://example.com/post/"><button type="button" class="ghost" id="load">Load</button></span></label>
-      <p class="caption" id="loadStatus" role="status" aria-live="polite">The page must allow cross-origin requests. Extracted text differs from the site's source, so the cover won't match the site's own.</p>
+      <p class="caption" id="loadStatus" role="status" aria-live="polite">The page must allow cross-origin requests. The extracted text can differ from what the site hashes, so the cover may not match the site's own.</p>
       <label class="stack">Title <input type="text" name="title" value="Never lose a holy curiosity."></label>
       <label class="stack">Body (optional, also hashed) <textarea name="body" rows="2"></textarea></label>
       <label class="stack">salt (your own key, e.g. your domain) <input type="text" name="salt" placeholder="none"></label>
@@ -110,7 +110,7 @@
       <div id="customColors" class="custom">
         <div class="actions"><input type="text" id="hexCodes" placeholder="#e8bd9e, #4d948d (empty: random)" aria-label="Hex codes to add"><button type="button" class="ghost" id="addColor">Add color</button></div>
         <div id="swatches" class="swatches" aria-label="Colors in use"></div>
-        <label class="check"><input type="checkbox" name="pickPerText"> Pick per text from these <span></span></label>
+        <label class="check"><input type="checkbox" name="pickPerText"> Pick some per text <span></span></label>
       </div>
       <label>Colors per text <input type="range" name="count" min="2" max="12" value="8"><output></output></label>
       <label class="check"><input type="checkbox" name="customInk"> Custom title color <input type="color" name="ink" value="#ffffff"></label>
@@ -152,7 +152,7 @@
 
 <section>
   <h2>Themes</h2>
-  <p class="muted">Your text in every theme. Pick one to use it above: <code>{ ...defaultStyle, ...themes.warm }</code></p>
+  <p class="muted">Your text in every theme. Click one to use it: <code>{ ...defaultStyle, ...themes.warm }</code></p>
   <div class="gallery" id="themes"></div>
 </section>
 
