@@ -1,0 +1,399 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>seedcover</title>
+<meta name="description" content="Deterministic pixel-mosaic cover images from text. Try every option live.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<meta property="og:title" content="seedcover">
+<meta property="og:description" content="Deterministic pixel-mosaic cover images from text. Try every option live.">
+<meta property="og:image" content="https://songyunseop.github.io/seedcover/og.png">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root { --paper: #fcfbf8; --ink: #262a27; --muted: #63695f; --line: #dcded5; --accent: #365a45; --code: #f0f1eb; color-scheme: light; }
+  @media (prefers-color-scheme: dark) { :root { --paper: #191b1a; --ink: #e9eae4; --muted: #a2a89e; --line: #33372f; --accent: #8fbd9c; --code: #232622; color-scheme: dark; } }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--paper); color: var(--ink); font: 15px/1.6 'Pretendard Variable', Pretendard, -apple-system, BlinkMacSystemFont, 'Apple SD Gothic Neo', 'Noto Sans KR', sans-serif; }
+  .wrap { width: min(1120px, calc(100% - 32px)); margin: auto; }
+  header { padding: 56px 0 32px; }
+  h1 { font-size: 40px; letter-spacing: -.03em; margin: 0 0 8px; }
+  h2 { font-size: 22px; letter-spacing: -.02em; margin: 0 0 16px; }
+  .lead { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 0 20px; }
+  pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
+  pre { background: var(--code); padding: 14px 16px; overflow-x: auto; margin: 0; line-height: 1.55; }
+  section { padding: 32px 0; border-top: 1px solid var(--line); }
+  .playground { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; }
+  .preview { order: -1; }
+  @media (min-width: 900px) { .playground { grid-template-columns: 340px minmax(0, 1fr); align-items: start; } .preview { order: 0; position: sticky; top: 16px; } }
+  fieldset { border: 0; border-top: 1px solid var(--line); margin: 0; padding: 14px 0 6px; display: grid; gap: 10px; }
+  fieldset:first-child { border-top: 0; padding-top: 0; }
+  legend { font-weight: 600; padding: 0; float: left; width: 100%; margin-bottom: 4px; }
+  label { display: grid; grid-template-columns: 112px 1fr auto; align-items: center; gap: 10px; font-size: 13px; color: var(--muted); }
+  label.stack { grid-template-columns: 1fr; gap: 4px; }
+  label > select, label:not(.stack) > .seed { grid-column: 2 / -1; }
+  label > span:empty { display: none; }
+  label.check { grid-template-columns: auto 1fr auto; }
+  input, select, textarea, button { font: inherit; color: var(--ink); }
+  input[type=text], input[type=url], textarea, select, input[type=number] { width: 100%; min-width: 0; padding: 7px 9px; border: 1px solid var(--line); background: transparent; border-radius: 0; }
+  textarea { resize: vertical; }
+  input[type=range] { width: 100%; accent-color: var(--accent); }
+  input[type=color] { width: 44px; height: 28px; padding: 0; border: 1px solid var(--line); background: none; }
+  output { font-variant-numeric: tabular-nums; min-width: 36px; text-align: right; color: var(--ink); }
+  .seed { display: flex; gap: 6px; }
+  .custom { display: grid; gap: 8px; }
+  .swatches { display: flex; flex-wrap: wrap; gap: 6px; }
+  .swatch { display: inline-flex; }
+  .swatch button { padding: 0 7px; }
+  #hexCodes { flex: 1; min-width: 0; padding: 7px 9px; border: 1px solid var(--line); background: transparent; }
+  button { border: 1px solid var(--ink); background: var(--ink); color: var(--paper); padding: 8px 14px; cursor: pointer; }
+  button.ghost { background: transparent; color: var(--ink); }
+  button:hover { background: var(--accent); border-color: var(--accent); color: var(--paper); }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .card { position: relative; aspect-ratio: 3 / 2; overflow: hidden; container-type: inline-size; }
+  .card.og { aspect-ratio: 1200 / 630; container-type: inline-size; }
+  .card svg { display: block; width: 100%; height: 100%; }
+  .card span { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 6%; text-align: center; font-weight: 600; line-height: 1.35; word-break: keep-all; overflow-wrap: anywhere; font-size: 7.5cqw; }
+  .card.og span { font-size: calc(var(--og-font, 96) * 100cqw / 1200); }
+  .strip { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 28px 0 0; }
+  @media (min-width: 700px) { .strip { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+  #themes { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
+  #themes .theme-pick small { font-size: 12px; }
+  .theme-pick { display: grid; gap: 6px; padding: 0; border: 0; background: none; color: var(--ink); text-align: left; }
+  .theme-pick:hover { background: none; color: var(--accent); }
+  .theme-pick[aria-pressed=true] .card { outline: 3px solid var(--accent); outline-offset: 3px; }
+  .theme-pick small { font-size: 13px; }
+  #gallery { grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+  @media (max-width: 600px) { #gallery { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; } .example figcaption { font-size: 12px; } }
+  .example { margin: 0; display: grid; gap: 6px; }
+  .example figcaption { font-size: 13px; color: var(--muted); }
+  .example a { color: var(--muted); text-underline-offset: 3px; }
+  .example a:hover { color: var(--accent); }
+  .preview, .previews, .usage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  @media (min-width: 1100px) { .previews { grid-template-columns: minmax(0, 3fr) minmax(0, 2fr); align-items: end; } }
+  .caption { font-size: 12px; color: var(--muted); margin: 6px 0 0; }
+  .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .gallery { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; }
+  .muted { color: var(--muted); }
+  @media (min-width: 900px) { .usage { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 18px; } }
+  .usage h3 { font-size: 15px; margin: 0 0 8px; }
+  footer { border-top: 1px solid var(--line); padding: 24px 0 48px; color: var(--muted); font-size: 13px; }
+</style>
+</head>
+<body>
+<header class="wrap">
+  <h1>seedcover</h1>
+  <p class="lead">Deterministic pixel-mosaic cover images from text. The same text always gives the same cover, so every post without a photo still gets a stable, distinct thumbnail.</p>
+  <pre><code>npm install seedcover</code></pre>
+  <div class="strip" id="strip" aria-hidden="true"></div>
+</header>
+
+<main class="wrap">
+<section class="playground" aria-label="Playground">
+  <form id="controls" autocomplete="off">
+    <fieldset>
+      <legend>Text</legend>
+      <label class="stack">Load a page (title, description and article text) <span class="seed"><input type="url" name="url" placeholder="https://example.com/post/"><button type="button" class="ghost" id="load">Load</button></span></label>
+      <p class="caption" id="loadStatus" role="status" aria-live="polite">The page must allow cross-origin requests. Extracted text differs from the site's source, so the cover won't match the site's own.</p>
+      <label class="stack">Title <input type="text" name="title" value="Never lose a holy curiosity."></label>
+      <label class="stack">Body (optional, also hashed) <textarea name="body" rows="2"></textarea></label>
+      <label class="stack">salt (your own key, e.g. your domain) <input type="text" name="salt" placeholder="none"></label>
+      <label>OG fontSize <input type="range" name="fontSize" min="48" max="144" step="4" value="96"><output></output></label>
+    </fieldset>
+    <fieldset>
+      <legend>Colors</legend>
+      <label>Colors <select name="colors">
+        <optgroup label="Themes" id="themeOptions"></optgroup>
+        <option value="custom">Custom…</option>
+      </select><span></span></label>
+      <div id="customColors" class="custom">
+        <div class="actions"><input type="text" id="hexCodes" placeholder="#e8bd9e, #4d948d (empty: random)" aria-label="Hex codes to add"><button type="button" class="ghost" id="addColor">Add color</button></div>
+        <div id="swatches" class="swatches" aria-label="Colors in use"></div>
+        <label class="check"><input type="checkbox" name="pickPerText"> Pick per text from these <span></span></label>
+      </div>
+      <label>Colors per text <input type="range" name="count" min="2" max="12" value="8"><output></output></label>
+      <label class="check"><input type="checkbox" name="customInk"> Custom title color <input type="color" name="ink" value="#ffffff"></label>
+      <label>colorMode <select name="colorMode">
+        <option value="auto" selected>auto (default)</option>
+        <option value="">mix</option>
+        <option value="groups">groups</option>
+        <option value="bands">bands</option>
+        <option value="rows">rows</option>
+        <option value="diagonal">diagonal</option>
+        <option value="waves">waves</option>
+        <option value="rings">rings</option>
+      </select><span></span></label>
+      <label>accentShare <input type="range" name="accentShare" min="0" max="1" step=".05" value=".45"><output></output></label>
+    </fieldset>
+    <fieldset>
+      <legend>Pixels</legend>
+      <label>maxSize <input type="range" name="maxSize" min="1" max="12" value="6"><output></output></label>
+      <label>seed <span class="seed"><input type="number" name="seed" min="0" value="0"><button type="button" class="ghost" id="dice" aria-label="Random seed">Shuffle</button></span></label>
+    </fieldset>
+    <fieldset>
+      <div class="actions"><button type="reset" class="ghost">Reset to defaultStyle</button></div>
+    </fieldset>
+  </form>
+
+  <div class="preview">
+    <div class="previews">
+      <figure style="margin:0"><div class="card" id="cover"></div><figcaption class="caption">coverToSvg(cover) · 3:2 with your own HTML title</figcaption></figure>
+      <figure style="margin:0"><div class="card og" id="og"></div><figcaption class="caption">Open Graph crop · createOgImage renders this as a 1200×630 PNG in Node</figcaption></figure>
+    </div>
+    <pre><code id="code"></code></pre>
+    <div class="actions">
+      <button type="button" id="copy">Copy code</button>
+      <button type="button" class="ghost" id="download">Download SVG</button>
+      <span class="muted" id="status" role="status" aria-live="polite"></span>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Themes</h2>
+  <p class="muted">Your text in every theme. Pick one to use it above: <code>{ ...defaultStyle, ...themes.warm }</code></p>
+  <div class="gallery" id="themes"></div>
+</section>
+
+<section>
+  <h2>Examples</h2>
+  <p class="muted">Three blog posts, four patterns each: the same title gives a different cover with different options. Seed and salt follow your settings above; nothing is random between renders.</p>
+  <div class="gallery" id="gallery"></div>
+</section>
+
+<section>
+  <h2>Usage</h2>
+  <div class="usage">
+    <div><h3>Cover (any runtime)</h3><pre><code>import { createCover, coverToSvg } from 'seedcover';
+
+const cover = await createCover(`${title}\n${body}`);
+const svg = coverToSvg(cover);
+// Put the title on top yourself:
+// color: cover.ink</code></pre></div>
+    <div><h3>Open Graph PNG (Node + sharp)</h3><pre><code>import { createOgImage } from 'seedcover/og';
+
+const png = await createOgImage({
+  title, cover,
+  fontfile: './fonts/NotoSansKR.ttf',
+  font: 'Noto Sans KR',
+  fontSize: 96, // optional
+});</code></pre></div>
+  </div>
+</section>
+</main>
+
+<footer class="wrap">seedcover · MIT</footer>
+
+<script type="module">
+import { createCover, coverToSvg, defaultStyle, themes } from './src/index.js';
+
+const form = document.getElementById('controls');
+const field = name => form.elements[name];
+const libDefaults = { maxSize: 6, seed: 0, accentShare: .15 };
+// Three posts, four patterns each: themes, color modes (auto, groups, bands, mix), pixel sizes and accent share.
+const posts = [
+  { title: 'Do Things that Don\'t Scale', author: 'Paul Graham', year: 2013, url: 'https://paulgraham.com/ds.html', variants: [
+    { theme: 'warm' },
+    { theme: 'playful', colorMode: 'bands' },
+    { theme: 'fresh', maxSize: 10 },
+    { theme: 'cozy', colorMode: '', maxSize: 3 },
+  ] },
+  { title: '어서오세요. 전지적 송윤섭시점 블로그에.', author: 'SongYunSeop', url: 'https://www.songyunseop.com/about/', variants: [
+    { theme: 'muted' },
+    { theme: 'dawn', colorMode: 'groups', maxSize: 3 },
+    { theme: 'night', accentShare: .8 },
+    { theme: 'dusk', accentShare: .15, maxSize: 8 },
+  ] },
+  { title: 'Software 2.0', author: 'Andrej Karpathy', year: 2017, url: 'https://karpathy.medium.com/software-2-0-a64152b37c35', variants: [
+    { theme: 'playful' },
+    { theme: 'muted', colorMode: 'bands', maxSize: 10 },
+    { theme: 'dawn', maxSize: 2 },
+    { theme: 'cozy', colorMode: 'groups' },
+  ] },
+];
+const examples = posts.flatMap(({ variants, ...post }) => variants.map(({ theme, ...options }) => ({ ...post, theme, options })));
+
+// Hero: the same text in six themes and settings.
+Promise.all([['muted', {}], ['warm', { maxSize: 10 }], ['playful', { colorMode: 'bands' }], ['dawn', { maxSize: 3 }], ['fresh', { colorMode: 'groups' }], ['night', {}]]
+  .map(([theme, options]) => createCover('seedcover', { ...defaultStyle, ...themes[theme], ...options })))
+  .then(covers => document.getElementById('strip').replaceChildren(...covers.map(cover => card(Object.assign(document.createElement('div'), { className: 'card' }), cover, ''))));
+
+document.getElementById('themeOptions').append(...Object.entries(themes).map(([id, theme]) =>
+  new Option(id === 'muted' ? `${theme.name} (defaultStyle)` : theme.name, id, id === 'muted', id === 'muted')));
+
+const swatches = document.getElementById('swatches');
+const swatchColors = () => [...swatches.querySelectorAll('input')].map(input => input.value);
+
+function read() {
+  const f = Object.fromEntries(new FormData(form));
+  const theme = themes[f.colors], custom = f.colors === 'custom';
+  const colors = swatchColors();
+  let o;
+  if (theme) o = { ...defaultStyle, ...theme, ...(+f.count !== theme.pixels.length ? { colorCount: +f.count } : {}) };
+  // Same shape as a theme (candidates, shuffled per text), so switching a theme to Custom without edits keeps the cover.
+  else if (custom) o = { colorCandidates: colors, colorCount: f.pickPerText ? Math.min(+f.count, colors.length) : colors.length };
+  if (f.customInk) o.ink = f.ink;
+  if (f.salt) o.salt = f.salt;
+  Object.assign(o, { maxSize: +f.maxSize, seed: +f.seed || 0, colorMode: f.colorMode || undefined, accentShare: +f.accentShare });
+  return { text: f.title + (f.body.trim() ? `\n${f.body}` : ''), title: f.title, options: o, mode: f.colors };
+}
+
+function snippet({ text, options, mode }) {
+  const theme = themes[mode], custom = mode === 'custom';
+  const base = theme ? { ...libDefaults, ...defaultStyle, ...theme } : libDefaults;
+  const entries = theme ? ['...defaultStyle', ...(mode === 'muted' ? [] : [`...themes.${mode}`])] : [];
+  const format = value => value === undefined ? 'undefined' : Array.isArray(value) ? `[${value.map(item => `'${item}'`).join(', ')}]` : JSON.stringify(value).replaceAll('"', "'");
+  for (const [key, value] of Object.entries(options)) {
+    if (key === 'name' || (key === 'colorCandidates' || key === 'pixels') && !custom) continue;
+    if (base[key] !== value) entries.push(`${key}: ${format(value)}`);
+  }
+  const names = ['createCover', 'coverToSvg', ...(theme ? ['defaultStyle'] : []), ...(theme && mode !== 'muted' ? ['themes'] : [])];
+  const args = entries.length ? `, {\n  ${entries.join(',\n  ')},\n}` : '';
+  return `import { ${names.join(', ')} } from 'seedcover';\n\nconst cover = await createCover(${JSON.stringify(text)}${args});\nconst svg = coverToSvg(cover);`;
+}
+
+function card(target, cover, title, svgOptions) {
+  target.style.color = cover.ink;
+  target.innerHTML = coverToSvg(cover, svgOptions);
+  const span = document.createElement('span');
+  span.textContent = title;
+  target.append(span);
+  return target;
+}
+
+let version = 0, current;
+async function render() {
+  const v = ++version;
+  const state = read();
+  const cover = await createCover(state.text, state.options);
+  // Each example has its own theme and options; only seed and salt follow the playground.
+  const { seed, salt } = state.options;
+  const others = await Promise.all(examples.map(async example => [example, await createCover(example.title, { ...defaultStyle, ...themes[example.theme], seed, salt, ...example.options })]));
+  const themed = await Promise.all(Object.entries(themes).map(async ([id, theme]) => [id, theme, await createCover(state.text, { ...defaultStyle, ...theme, salt: state.options.salt })]));
+  // Custom colors join the list while selected, so they can be compared with the themes.
+  if (state.mode === 'custom') themed.push(['custom', { name: 'Custom' }, await createCover(state.text, { ...defaultStyle, colorCandidates: state.options.colorCandidates, colorCount: state.options.colorCount, salt: state.options.salt })]);
+  if (v !== version) return;
+  current = { state, cover };
+  card(document.getElementById('cover'), cover, state.title);
+  card(document.getElementById('og'), cover, state.title, { width: 1200, height: 630, viewBox: '0 17 240 126' }).style.setProperty('--og-font', field('fontSize').value);
+  document.getElementById('gallery').replaceChildren(...others.map(([example, c]) => {
+    const theme = themes[example.theme];
+    const item = document.createElement('figure');
+    item.className = 'example';
+    const art = card(Object.assign(document.createElement('div'), { className: 'card' }), c, example.title);
+    const link = Object.assign(document.createElement('a'), { href: example.url, target: '_blank', rel: 'noopener noreferrer', textContent: `${example.author}${example.year ? `, ${example.year}` : ''} ↗` });
+    const caption = document.createElement('figcaption');
+    caption.append(link, [theme.name, ...Object.entries(example.options).map(([key, value]) => `${key} ${value === '' ? 'mix' : value}`)].map(text => ` · ${text}`).join(''));
+    item.append(art, caption);
+    return item;
+  }));
+  document.getElementById('themes').replaceChildren(...themed.map(([id, theme, c]) => {
+    const pick = Object.assign(document.createElement('button'), { type: 'button', className: 'theme-pick' });
+    pick.setAttribute('aria-pressed', String(state.mode === id));
+    pick.append(card(Object.assign(document.createElement('div'), { className: 'card' }), c, state.title), Object.assign(document.createElement('small'), { textContent: id === 'custom' ? 'Custom · your colors' : `${theme.name} · themes.${id}` }));
+    pick.addEventListener('click', () => { field('colors').value = id; field('colors').dispatchEvent(new Event('change', { bubbles: true })); });
+    return pick;
+  }));
+  document.getElementById('code').textContent = snippet(state);
+}
+
+function sync() {
+  form.querySelectorAll('input[type=range]').forEach(input => { input.nextElementSibling.textContent = input.value; });
+  const custom = field('colors').value === 'custom';
+  const theme = themes[field('colors').value];
+  field('count').max = theme ? theme.colorCandidates.length : custom ? swatches.children.length : 12;
+  field('count').disabled = !(theme || custom && field('pickPerText').checked);
+  field('count').nextElementSibling.textContent = field('count').value;
+  field('ink').disabled = !field('customInk').checked;
+  render();
+}
+
+form.addEventListener('input', sync);
+form.addEventListener('change', sync);
+form.addEventListener('reset', () => setTimeout(() => { showTheme(); sync(); }));
+// Fill title/body from a page. DOMParser never runs the fetched page's scripts.
+async function load() {
+  const out = document.getElementById('loadStatus');
+  let url;
+  try { url = new URL(field('url').value); if (!/^https?:$/.test(url.protocol)) throw 0; } catch { out.textContent = 'Enter an http(s) URL.'; return; }
+  out.textContent = 'Loading…';
+  try {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const doc = new DOMParser().parseFromString(await res.text(), 'text/html');
+    const meta = name => doc.querySelector(`meta[property="${name}"], meta[name="${name}"]`)?.content?.trim() || '';
+    // A selector list matches in document order, so try each selector by priority instead.
+    const first = (...selectors) => selectors.map(selector => doc.querySelector(selector)).find(Boolean);
+    const article = first('article .prose', 'article', 'main');
+    article?.querySelectorAll('script, style, noscript, template').forEach(node => node.remove());
+    // textContent glues adjacent blocks ("one.Two"), so end each block with a space first.
+    article?.querySelectorAll('p, li, h1, h2, h3, h4, h5, h6, blockquote, pre, figcaption, td, br').forEach(node => node.after(' '));
+    field('title').value = first('article h1', 'h1')?.textContent.trim() || meta('og:title') || doc.title.trim() || url.hostname;
+    field('body').value = [meta('description') || meta('og:description'), article?.textContent.replace(/\s+/g, ' ').trim()].filter(Boolean).join('\n');
+    out.textContent = `Loaded ${url.hostname}${url.pathname}`;
+    sync();
+  } catch (error) {
+    out.textContent = error instanceof TypeError ? 'Blocked: this site does not allow cross-origin requests.' : `Could not load: ${error.message}`;
+  }
+}
+document.getElementById('load').addEventListener('click', load);
+field('url').addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); load(); } });
+// The colors in use: a theme's, shown as swatches. Editing, adding or removing one turns the theme into Custom.
+function addSwatch(color) {
+  if (swatches.children.length >= 24) return;
+  const wrap = Object.assign(document.createElement('span'), { className: 'swatch' });
+  const input = Object.assign(document.createElement('input'), { type: 'color', value: color });
+  const remove = Object.assign(document.createElement('button'), { type: 'button', className: 'ghost', textContent: '×' });
+  input.setAttribute('aria-label', 'Color');
+  remove.setAttribute('aria-label', 'Remove color');
+  remove.addEventListener('click', () => { if (swatches.children.length > 2) { toCustom(); wrap.remove(); sync(); } });
+  wrap.append(input, remove);
+  swatches.append(wrap);
+}
+function showTheme() {
+  const theme = themes[field('colors').value];
+  if (!theme) return;
+  swatches.replaceChildren();
+  theme.colorCandidates.forEach(addSwatch);
+  field('pickPerText').checked = theme.colorCandidates.length > theme.pixels.length;
+}
+function toCustom() {
+  const theme = themes[field('colors').value];
+  if (!theme) return;
+  // Keep a reduced "Colors per text" from the theme, so the switch itself doesn't change the cover.
+  if (+field('count').value < theme.colorCandidates.length) field('pickPerText').checked = true;
+  field('colors').value = 'custom';
+}
+field('colors').addEventListener('change', showTheme);
+swatches.addEventListener('input', toCustom);
+field('pickPerText').addEventListener('change', () => { const checked = field('pickPerText').checked; toCustom(); field('pickPerText').checked = checked; });
+showTheme();
+// Add the hex codes typed in (#rgb or #rrggbb, any separator), or one random color when the field is empty.
+const hexCodes = document.getElementById('hexCodes');
+function addColors() {
+  toCustom();
+  const codes = hexCodes.value.match(/#?\b([0-9a-f]{6}|[0-9a-f]{3})\b/gi) || [];
+  if (codes.length) codes.forEach(code => addSwatch('#' + code.replace('#', '').replace(/^(.)(.)(.)$/, '$1$1$2$2$3$3').toLowerCase()));
+  else addSwatch(`#${Math.floor(Math.random() * 0x1000000).toString(16).padStart(6, '0')}`);
+  hexCodes.value = '';
+  sync();
+}
+document.getElementById('addColor').addEventListener('click', addColors);
+hexCodes.addEventListener('keydown', event => { if (event.key === 'Enter') { event.preventDefault(); addColors(); } });
+// Turning on a custom title color starts from the one in use, so nothing jumps until you change it.
+field('customInk').addEventListener('change', () => { if (field('customInk').checked && current) field('ink').value = current.cover.ink; });
+document.getElementById('dice').addEventListener('click', () => { field('seed').value = Math.floor(Math.random() * 10000); sync(); });
+const status = text => { document.getElementById('status').textContent = text; setTimeout(() => { document.getElementById('status').textContent = ''; }, 1800); };
+document.getElementById('copy').addEventListener('click', async () => {
+  try { await navigator.clipboard.writeText(document.getElementById('code').textContent); status('Copied'); } catch { status('Copy failed'); }
+});
+document.getElementById('download').addEventListener('click', () => {
+  const url = URL.createObjectURL(new Blob([coverToSvg(current.cover)], { type: 'image/svg+xml' }));
+  Object.assign(document.createElement('a'), { href: url, download: 'seedcover.svg' }).click();
+  setTimeout(() => URL.revokeObjectURL(url));
+});
+sync();
+</script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+{
+  "name": "seedcover",
+  "version": "0.1.0",
+  "description": "Deterministic pixel-mosaic cover images from text: SVG in any JS runtime, Open Graph PNG with sharp.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SongYunSeop/seedcover.git"
+  },
+  "homepage": "https://songyunseop.github.io/seedcover/",
+  "bugs": {
+    "url": "https://github.com/SongYunSeop/seedcover/issues"
+  },
+  "type": "module",
+  "exports": {
+    ".": "./src/index.js",
+    "./og": "./src/og.js"
+  },
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "peerDependencies": {
+    "sharp": ">=0.33"
+  },
+  "peerDependenciesMeta": {
+    "sharp": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "sharp": "0.35.5"
+  },
+  "keywords": [
+    "cover",
+    "thumbnail",
+    "og-image",
+    "pixel",
+    "mosaic",
+    "svg",
+    "blog",
+    "generative"
+  ],
+  "author": "SongYunSeop",
+  "license": "MIT"
+}
