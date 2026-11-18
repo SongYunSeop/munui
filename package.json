@@ -1,14 +1,14 @@
 {
-  "name": "seedcover",
+  "name": "munui",
   "version": "0.1.0",
   "description": "Deterministic pixel-mosaic cover images from text: SVG in any JS runtime, Open Graph PNG with sharp.",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SongYunSeop/seedcover.git"
+    "url": "git+https://github.com/SongYunSeop/munui.git"
   },
-  "homepage": "https://songyunseop.github.io/seedcover/",
+  "homepage": "https://songyunseop.github.io/munui/",
   "bugs": {
-    "url": "https://github.com/SongYunSeop/seedcover/issues"
+    "url": "https://github.com/SongYunSeop/munui/issues"
   },
   "type": "module",
   "exports": {

@@ -1,4 +1,6 @@
-# seedcover
+# munui
+
+`munui` (무늬) is Korean for "pattern".
 
 Deterministic pixel-mosaic cover images from text. The same text always gives the same cover, so posts without a photo still get a stable, distinct thumbnail.
 
@@ -10,14 +12,14 @@ Deterministic pixel-mosaic cover images from text. The same text always gives th
 ## Install
 
 ```sh
-npm install seedcover
-npm install sharp   # only for seedcover/og
+npm install munui
+npm install sharp   # only for munui/og
 ```
 
 ## Usage
 
 ```js
-import { createCover, coverToSvg } from 'seedcover';
+import { createCover, coverToSvg } from 'munui';
 
 const cover = await createCover(`${title}\n${excerpt}\n${body}`);
 // { ink: '#000000', blocks: [{ x, y, width, height, color }, ...] }  squares filling a 240×160 grid
@@ -30,7 +32,7 @@ Put the title on top with your own HTML/CSS using `cover.ink` as the text color.
 ### Open Graph image
 
 ```js
-import { createOgImage } from 'seedcover/og';
+import { createOgImage } from 'munui/og';
 
 const png = await createOgImage({
   title,
@@ -54,12 +56,12 @@ The 3:2 cover is cropped to 1200×630 around its center; long titles are split i
 | `defaultStyle` | Full-bleed mosaic with 8 colors picked per text from 24 muted candidates. |
 | `themes` | Named color themes; spread one over a style. |
 | `mutedColorCandidates` | The 24 colors `defaultStyle` picks from. |
-| `createOgImage({ title, cover, fontfile, font, fontSize })` | `seedcover/og`. PNG `Buffer`. |
+| `createOgImage({ title, cover, fontfile, font, fontSize })` | `munui/og`. PNG `Buffer`. |
 
 ### Themes
 
 ```js
-import { createCover, defaultStyle, themes } from 'seedcover';
+import { createCover, defaultStyle, themes } from 'munui';
 
 await createCover(text, { ...defaultStyle, ...themes.warm });
 await createCover(text, { ...defaultStyle, ...themes.night, colorCount: 5 }); // 5 of its 8 colors per text

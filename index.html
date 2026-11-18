@@ -3,13 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>seedcover</title>
+<title>munui</title>
 <meta name="description" content="Deterministic pixel-mosaic cover images from text. Try every option live.">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pretendard@1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
-<meta property="og:title" content="seedcover">
+<meta property="og:title" content="munui">
 <meta property="og:description" content="Deterministic pixel-mosaic cover images from text. Try every option live.">
-<meta property="og:image" content="https://songyunseop.github.io/seedcover/og.png">
+<meta property="og:image" content="https://songyunseop.github.io/munui/og.png">
 <meta name="twitter:card" content="summary_large_image">
 <style>
   :root { --paper: #fcfbf8; --ink: #262a27; --muted: #63695f; --line: #dcded5; --accent: #365a45; --code: #f0f1eb; color-scheme: light; }
@@ -19,6 +19,7 @@
   .wrap { width: min(1120px, calc(100% - 32px)); margin: auto; }
   header { padding: 56px 0 32px; }
   h1 { font-size: 40px; letter-spacing: -.03em; margin: 0 0 8px; }
+  h1 small { margin-left: .3em; font-size: .45em; font-weight: 500; letter-spacing: 0; color: var(--muted); }
   h2 { font-size: 22px; letter-spacing: -.02em; margin: 0 0 16px; }
   .lead { color: var(--muted); font-size: 18px; max-width: 640px; margin: 0 0 20px; }
   pre, code { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; }
@@ -83,9 +84,9 @@
 </head>
 <body>
 <header class="wrap">
-  <h1>seedcover</h1>
+  <h1>munui <small lang="ko">무늬</small></h1>
   <p class="lead">Deterministic pixel-mosaic cover images from text. The same text always gives the same cover, so every post without a photo still gets a stable, distinct thumbnail.</p>
-  <pre><code>npm install seedcover</code></pre>
+  <pre><code>npm install munui</code></pre>
   <div class="strip" id="strip" aria-hidden="true"></div>
 </header>
 
@@ -165,13 +166,13 @@
 <section>
   <h2>Usage</h2>
   <div class="usage">
-    <div><h3>Cover (any runtime)</h3><pre><code>import { createCover, coverToSvg } from 'seedcover';
+    <div><h3>Cover (any runtime)</h3><pre><code>import { createCover, coverToSvg } from 'munui';
 
 const cover = await createCover(`${title}\n${body}`);
 const svg = coverToSvg(cover);
 // Put the title on top yourself:
 // color: cover.ink</code></pre></div>
-    <div><h3>Open Graph PNG (Node + sharp)</h3><pre><code>import { createOgImage } from 'seedcover/og';
+    <div><h3>Open Graph PNG (Node + sharp)</h3><pre><code>import { createOgImage } from 'munui/og';
 
 const png = await createOgImage({
   title, cover,
@@ -183,7 +184,7 @@ const png = await createOgImage({
 </section>
 </main>
 
-<footer class="wrap">seedcover · MIT</footer>
+<footer class="wrap">munui · MIT</footer>
 
 <script type="module">
 import { createCover, coverToSvg, defaultStyle, themes } from './src/index.js';
@@ -216,7 +217,7 @@ const examples = posts.flatMap(({ variants, ...post }) => variants.map(({ theme,
 
 // Hero: the same text in six themes and settings.
 Promise.all([['muted', {}], ['warm', { maxSize: 10 }], ['playful', { colorMode: 'bands' }], ['dawn', { maxSize: 3 }], ['fresh', { colorMode: 'groups' }], ['night', {}]]
-  .map(([theme, options]) => createCover('seedcover', { ...defaultStyle, ...themes[theme], ...options })))
+  .map(([theme, options]) => createCover('munui', { ...defaultStyle, ...themes[theme], ...options })))
   .then(covers => document.getElementById('strip').replaceChildren(...covers.map(cover => card(Object.assign(document.createElement('div'), { className: 'card' }), cover, ''))));
 
 document.getElementById('themeOptions').append(...Object.entries(themes).map(([id, theme]) =>
@@ -250,7 +251,7 @@ function snippet({ text, options, mode }) {
   }
   const names = ['createCover', 'coverToSvg', ...(theme ? ['defaultStyle'] : []), ...(theme && mode !== 'muted' ? ['themes'] : [])];
   const args = entries.length ? `, {\n  ${entries.join(',\n  ')},\n}` : '';
-  return `import { ${names.join(', ')} } from 'seedcover';\n\nconst cover = await createCover(${JSON.stringify(text)}${args});\nconst svg = coverToSvg(cover);`;
+  return `import { ${names.join(', ')} } from 'munui';\n\nconst cover = await createCover(${JSON.stringify(text)}${args});\nconst svg = coverToSvg(cover);`;
 }
 
 function card(target, cover, title, svgOptions) {
@@ -390,7 +391,7 @@ document.getElementById('copy').addEventListener('click', async () => {
 });
 document.getElementById('download').addEventListener('click', () => {
   const url = URL.createObjectURL(new Blob([coverToSvg(current.cover)], { type: 'image/svg+xml' }));
-  Object.assign(document.createElement('a'), { href: url, download: 'seedcover.svg' }).click();
+  Object.assign(document.createElement('a'), { href: url, download: 'munui.svg' }).click();
   setTimeout(() => URL.revokeObjectURL(url));
 });
 sync();
